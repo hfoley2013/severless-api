@@ -1,19 +1,39 @@
+from http.server import BaseHTTPRequestHandler
+from urllib import parse
 import requests
 
-def find_capital(request):
-    # Parse the query string
-    query_params = request.args
-    if "country" in query_params:
-        # Make a GET request to the REST Countries API with the given country name
-        response = requests.get(f"https://restcountries.eu/v2/name/{query_params['country']}?fullText=true")
-        data = response.json()
-        # Return the capital of the country
-        return f"The capital of {query_params['country']} is {data[0]['capital']}.", 200
-    elif "capital" in query_params:
-        # Make a GET request to the REST Countries API with the given capital name
-        response = requests.get(f"https://restcountries.eu/v2/capital/{query_params['capital']}")
-        data = response.json()
-        # Return the name of the country with the given capital
-        return f"{query_params['capital']} is the capital of {data[0]['name']['common']}.", 200
-    else:
-        return "Please provide a country or capital name.", 400
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        s = self.path
+        url_components = parse.urlsplit(s)
+        query_string_list = parse.parse_qsl(url_components.query)
+        dic = dict(query_string_list)
+
+        if "country" in dic:
+            response = requests.get(f"https://restcountries.com/v3.1/name/{dic['country']}")
+            data = response.json()
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(f"The capital of {dic['country']} is {data[0]['capital']}.")
+        # if "word" in dic:
+        #     url = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+        #     r = requests.get(url + dic["word"])
+        #     data = r.json()
+        #     definitions = []
+        #     for word_data in data:
+        #         definition = word_data["meanings"][0]["definitions"][0]["definition"]
+        #         definitions.append(definition)
+        #     message = str(definitions)
+
+        # else:
+        #     message = "Give me a word to define please"
+
+        self.send_response(200)
+        self.send_header('Content-type','text/plain')
+        self.end_headers()
+
+        self.wfile.write(message.encode())
+
+        return
