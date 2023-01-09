@@ -14,7 +14,7 @@ class handler(BaseHTTPRequestHandler):
             r = requests.get(url + dic["country"])
             data = r.json()
             country = dic['country']
-            capital = str(data[0]['capital'])
+            capital = str(data[0]['capital'][0])
             message = f"The capital of {country.capitalize()} is {capital.capitalize()}"
 
         else:
