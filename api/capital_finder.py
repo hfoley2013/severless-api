@@ -24,7 +24,7 @@ class handler(BaseHTTPRequestHandler):
             message = "Give me a country and I will return the capital city, or give me a capital city and I will return its country."
 
         self.send_response(200)
-        self.send_header('Content-type','text/plain')
+        self.send_header('Content-Type','application/json')
         self.end_headers()
 
         self.wfile.write(message.encode())
